@@ -1,20 +1,14 @@
 bus.libs.react17.coffreact()
+bus.libs.localstorage('ls/*')
 
 bus.state['markdown'] = ''
 bus.state['selection'] = ''
-bus.state['saved_points'] = []
+bus.state['ls/saved_points'] ?= []
 
-# sp.text is the point text
-# sp.selection.text is the text that was highlighted to create the point
-_example_sp = 
-	text: 'how does it know which DNS server to check/the IP of the DNS server?'
-	selection:
-		top: 133.8125
-		text: 'how does it know which DNS server to check/the IP of the DNS server?'
+bus.state['focus_key_entry'] = false
 
-DEBUG = true
-if DEBUG
-	bus.state['saved_points'].push(_example_sp)
+POINT_ENTRY_COLOR = '#FDFD96'
+MOCK_PREFIX = '/outerloper/mock'
 
 http = new XMLHttpRequest()
 http.open('GET', 'data/tryna make a website.md')
@@ -30,7 +24,7 @@ dom.BODY = ->
 	DIV {},
 		display: 'flex'
 		DIV {},
-			flex: '3 1 400px'
+			flex: '2 1 200px'
 			padding: '10px'
 			border: '1px solid green'
 			unescape_html converter.makeHtml bus.state['markdown']
@@ -38,34 +32,68 @@ dom.BODY = ->
 			flex: '1 2 200px'
 			padding: '10px'
 			border: '1px solid red'
-			H2 'points'
+			H2 {},
+				'points'
+				BUTTON {},
+					onClick: -> bus.state['ls/saved_points'] = []
+					background: 'transparent'
+					border: '0px'
+					'📉'
 			POTENTIAL_POINT
 				selection: bus.state['selection']
-			for sp in bus.state['saved_points']
+			for sp in bus.state['ls/saved_points']
 				SAVED_POINT {saved_point: sp, key: "sp:#{sp.text}"}
 
 
 dom.POTENTIAL_POINT = (selection) ->
 	if selection.text
-		BR()
+		bus.state['focus_key_entry'] = true
 		DIV {},
 			position: 'absolute'
 			top: selection.top + 'px'
+			display: 'flex'
 			border: '1px dashed blue'
-			selection.text
-			BR()
-			BUTTON {},
-				border: '0px'
-				onClick: ->
-					save_potential_point selection
-					clear_selection()
-				'make point☝️'
+			marginRight: '20px'
+			DIV {},
+				DIV {},
+					display: 'flex'
+					justifyContent: 'space-between'
+					DIV {},
+						selection.text
+					BUTTON {},
+						border: '0px'
+						alignSelf: 'flex-start'
+						background: 'transparent'
+						onClick: -> clear_selection()
+						'❌'
+				DIV {},
+					backgroundColor: POINT_ENTRY_COLOR
+					CODE '<point> name: '
+					POINT_NAME_FIELD
+						selection: selection
 	else null
+
+dom.POINT_NAME_FIELD = (selection) ->
+	INPUT {},
+		id: 'point_key_entry'
+		height: '20px'
+		borderWidth: 0
+		resize: 'none'
+		autoFocus: true
+		bottom: '1px'
+		backgroundColor: POINT_ENTRY_COLOR
+		color: 'blue'
+		fontSize: 16
+		className: 'borderless'
+		onKeyDown: (e) ->
+			if e.keyCode == 13 then save_potential_point e.target.value, selection
+
 
 dom.SAVED_POINT = (saved_point) ->
 	DIV {},
 		position: 'absolute'
 		top: saved_point.selection.top + 'px'
+		H4 saved_point.name
 		saved_point.text
 
 
@@ -86,13 +114,36 @@ clear_selection = ->
 highlight_text_occurrence = (text) ->
 	null
 
-save_potential_point = (selection) ->
-	bus.state['saved_points'].push
+save_potential_point = (name, selection) ->
+	console.log point_html name, selection.text
+	bus.state['ls/saved_points'].push
+		name: name
 		text: selection.text
 		selection:
 			text: selection.text
 			top: selection.top
+	clear_selection()
+
+point_html = (name, text) ->
+	encoded_name = encodeURIComponent name.replaceAll(' ', '-')
+	"<point url=\"#{MOCK_PREFIX}/#{encoded_name}\">#{text}</point>"
 
 
 document.onmouseup = ->
-	bus.state['selection'] = get_selection()
+	selection = get_selection()
+	if selection.text then bus.state['selection'] = selection
+
+# I want to get Mike's vibe on this solution. Needed it to run after render was
+# completed. Kind of weird. I set 'focus_key_entry' in the React DOM code. hmm.
+# Feel like promises might be a thing here? "Do this after that's done."
+bus ->
+	if bus.state['focus_key_entry']
+		point_key_entry_box = document.getElementById('point_key_entry')
+		if point_key_entry_box?
+			point_key_entry_box.focus()
+			point_key_entry_box.value = ''
+		bus.state['focus_key_entry'] = false
+
+# TODO:
+#   make it grab focus on type rather than on render (for easier copy/pasting)
+# 	then of course actually add the points

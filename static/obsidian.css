@@ -3,3 +3,7 @@ body {
   line-height: 1.5em;
   font-size: 16px;
 }
+
+.borderless:focus {
+  outline: none;
+}

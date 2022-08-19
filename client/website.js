@@ -78,7 +78,6 @@ dom.BODY = function() {
 
 dom.POTENTIAL_POINT = function(selection) {
   if (selection.text) {
-    bus.state['focus_key_entry'] = true;
     return DIV({}, {
       position: 'absolute',
       top: selection.top + 'px',
@@ -187,21 +186,14 @@ document.onmouseup = function() {
   }
 };
 
-// I want to get Mike's vibe on this solution. Needed it to run after render was
-// completed. Kind of weird. I set 'focus_key_entry' in the React DOM code. hmm.
-// Feel like promises might be a thing here? "Do this after that's done."
-bus(function() {
-  var point_key_entry_box;
-  if (bus.state['focus_key_entry']) {
-    point_key_entry_box = document.getElementById('point_key_entry');
-    if (point_key_entry_box != null) {
-      point_key_entry_box.focus();
-      point_key_entry_box.value = '';
+window.onkeypress = function(e) {
+  var key_entry;
+  if (e.key !== ' ') {
+    key_entry = document.getElementById('point_key_entry');
+    if ((key_entry != null) && key_entry !== document.activeElement && !key_entry.value) {
+      return key_entry.focus();
     }
-    return bus.state['focus_key_entry'] = false;
   }
-});
+};
 
-// TODO:
-//   make it grab focus on type rather than on render (for easier copy/pasting)
 // 	then of course actually add the points

@@ -47,7 +47,6 @@ dom.BODY = ->
 
 dom.POTENTIAL_POINT = (selection) ->
 	if selection.text
-		bus.state['focus_key_entry'] = true
 		DIV {},
 			position: 'absolute'
 			top: selection.top + 'px'
@@ -133,17 +132,10 @@ document.onmouseup = ->
 	selection = get_selection()
 	if selection.text then bus.state['selection'] = selection
 
-# I want to get Mike's vibe on this solution. Needed it to run after render was
-# completed. Kind of weird. I set 'focus_key_entry' in the React DOM code. hmm.
-# Feel like promises might be a thing here? "Do this after that's done."
-bus ->
-	if bus.state['focus_key_entry']
-		point_key_entry_box = document.getElementById('point_key_entry')
-		if point_key_entry_box?
-			point_key_entry_box.focus()
-			point_key_entry_box.value = ''
-		bus.state['focus_key_entry'] = false
+window.onkeypress = (e) ->
+	if e.key != ' '
+		key_entry = document.getElementById('point_key_entry')
+		if key_entry? and key_entry != document.activeElement and !key_entry.value
+			key_entry.focus()
 
-# TODO:
-#   make it grab focus on type rather than on render (for easier copy/pasting)
 # 	then of course actually add the points

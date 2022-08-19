@@ -128,7 +128,7 @@ dom.SAVED_POINT = function(saved_point) {
   return DIV({}, {
     position: 'absolute',
     top: saved_point.selection.top + 'px'
-  }, H4(saved_point.name), saved_point.text);
+  }, unescape_html(point_html(saved_point.name, saved_point.text)));
 };
 
 get_selection = function() {
@@ -160,7 +160,6 @@ highlight_text_occurrence = function(text) {
 };
 
 save_potential_point = function(name, selection) {
-  console.log(point_html(name, selection.text));
   bus.state['ls/saved_points'].push({
     name: name,
     text: selection.text,

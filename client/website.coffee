@@ -92,8 +92,7 @@ dom.SAVED_POINT = (saved_point) ->
 	DIV {},
 		position: 'absolute'
 		top: saved_point.selection.top + 'px'
-		H4 saved_point.name
-		saved_point.text
+		unescape_html point_html saved_point.name, saved_point.text
 
 
 get_selection = ->
@@ -114,7 +113,6 @@ highlight_text_occurrence = (text) ->
 	null
 
 save_potential_point = (name, selection) ->
-	console.log point_html name, selection.text
 	bus.state['ls/saved_points'].push
 		name: name
 		text: selection.text

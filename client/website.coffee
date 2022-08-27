@@ -25,14 +25,14 @@ dom.BODY = ->
 		DIV {},
 			boxSizing: 'border-box'
 			float: 'left'
-			width: '75%'
+			width: '66%'
 			padding: '10px'
 			border: '1px solid green'
 			unescape_html converter.makeHtml bus.state['markdown']
 		DIV {},
 			boxSizing: 'border-box'
 			float: 'left'
-			width: '25%'
+			width: '34%'
 			padding: '10px'
 			border: '1px solid red'
 			H2 {},
@@ -138,5 +138,3 @@ window.onkeypress = (e) ->
 		key_entry = document.getElementById('point_key_entry')
 		if key_entry? and key_entry != document.activeElement and !key_entry.value
 			key_entry.focus()
-
-# 	then of course actually add the points

@@ -43,14 +43,16 @@ unescape_html = function(html) {
 
 dom.BODY = function() {
   var sp;
-  return DIV({}, {
-    display: 'flex'
-  }, DIV({}, {
-    flex: '2 1 200px',
+  return DIV({}, DIV({}, {
+    boxSizing: 'border-box',
+    float: 'left',
+    width: '75%',
     padding: '10px',
     border: '1px solid green'
   }, unescape_html(converter.makeHtml(bus.state['markdown']))), DIV({}, {
-    flex: '1 2 200px',
+    boxSizing: 'border-box',
+    float: 'left',
+    width: '25%',
     padding: '10px',
     border: '1px solid red'
   }, H2({}, 'points', BUTTON({}, {

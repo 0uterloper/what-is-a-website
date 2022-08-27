@@ -7,6 +7,7 @@ const static_files = [
   'client/website.coffee',
   'data/tryna make a website.md',
   'static/obsidian.css',
+  'vendor/client-library.js'
 ]
 
 http.createServer((req, res) => {

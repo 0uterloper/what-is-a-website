@@ -157,3 +157,10 @@ and uh, voila! These were the necessary changes to migrate this page (points dem
 looking for a competent engineer to belittle me for using `tool` so I can defiantly ignore them and miss the good advice hidden behind the dick-waving. any takers?
 
 `tool` is in this case Google Domains
+
+## github pages
+I committed all this stuff to github. tThe main file was already called index.html and sitting at the top level of the repo. I enabled github pages and AFAICT it's fully functional without my doing anything else.
+
+This is a bit odd, because I have code being included from `localhost:3001` addresses and it's getting them correctly from their paths in the repo. Github Pages must have some logic to assume behavior of static files at `localhost` addresses, because I'm pretty sure it wouldn't just run my static server code and use that.
+
+I am very curious about this. But as for now, I must play Elden Ring.

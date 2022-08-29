@@ -108,6 +108,12 @@ AFTER the import lines in the HTML, AND that JS line needs to be added at the to
 
 and uh, voila! These were the necessary changes to migrate this page (points demo thing) from statebus v6 to v7. Onward to integrating points~
 
+### More statebus
+- Wanted to make a textarea not have a border on focus. Good solution from StackOverflow: `textarea:focus { outline: none; }`
+	- Problem is it's a new style rule, which afaict is not supported in the statebus client libs.
+	- Easy solution is to use CSS, but noting here that I would've preferred to do this in the coffeescript code if it were possible
+		- Note: to add CSS classes it's `className` instead of `class`
+
 ## Points bs
 - Add `<script src="https://braid.org/point.js"></script>` into head of HTML
 	- Immediately get
@@ -129,6 +135,23 @@ and uh, voila! These were the necessary changes to migrate this page (points dem
 	- I found somewhere where points is importing statebus client code under a weird different name and the code is slightly edited in a way that seems relevant
 		- That indeed seems to be the problem. I copied `point.js` to my server and edited this line out and things seem to be working.
 		- Why did this happen?
+	- I've been talking to Greg, who wrote `point.js`, and apparently statebus client library and braidify both don't like being included twice. This is a bug in those places, but for now, he modified `point.js` to check if they have already been included and not include again if so. Fixed this problem.
+- Now I have `React.createClass is not a function` in the console
+	- Specifically, when I load the page with a `<point>` tag already on screen
+	- Probably because [`createClass` got moved to its own module](https://stackoverflow.com/a/46482830)
+		- But this doesn't fully explain the situation, because `create-react-class` is being included, both in `index.html` and `point.js`.
+	- I updated the code to use `createReactClass` (from global namespace) instead of `React.createClass` as recommended in another answer to that StackOverflow question. Seemed to work.
+
+## CSS bs
+- if an element has `position: absolute`, it doesn't affect the size scaling of its parent
+	- I had a textbox that I wanted to be flush with the bottom of its div. I set its position to absolute based on an answer I found for how to do that
+	- Later the container was sometimes not wide enough and the text box stuck out the side. 
+	- After trying a bunch of stuff with `min-width`, fixed it by removing `position: absolute` lol
+- Had a div with text and a button side-by-side in it. Wanted the button to stick to the right side.
+	- Apparently `justify-content: space-between` does it, for some reason 
+		- [StackOverflow link](https://stackoverflow.com/a/39514104) -- this did work for me
+- width: 75% and width: 25% didn't add up because padding and border added pixels
+	- Fix was to add `box-sizing: border-box` to override default `content-box`. [Docs](https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing) 
 
 ## request for comments
 looking for a competent engineer to belittle me for using `tool` so I can defiantly ignore them and miss the good advice hidden behind the dick-waving. any takers?
